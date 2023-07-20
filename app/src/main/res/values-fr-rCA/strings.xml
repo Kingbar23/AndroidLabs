@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Laboratoires Android</string>
     <string name="hello_world">Bonjour le monde</string>
     <string name="button_text">Je suis un bouton</string>
+    <string name="android">J\'aime Androïd</string>
+    <string name="switch_on_off">Activer/désactiver</string>
+    <string name="press_me">APPUIE SUR MOI</string>
+    <string name="check_this_out">Vérifiez ceci !</string>
+    <string name="toast_message">L\'étiquette a été mise à jour.</string>
+    <string name="checkBox_state">La case à cocher est maintenant</string>
+    <string name="on">activée</string>
+    <string name="off">désactivée</string>
+
 </resources>
