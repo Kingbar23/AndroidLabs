@@ -11,5 +11,10 @@
     <string name="checkBox_state">La case à cocher est maintenant</string>
     <string name="on">activée</string>
     <string name="off">désactivée</string>
+    <string name="welcome">Bienvenue !</string>
+    <string name="don_t_call_me_that">NE M\'APPELLE PAS COMME ÇA</string>
+    <string name="thank_you">MERCI</string>
+    <string name="enter_your_name">Entrez votre nom</string>
+    <string name="next">Suivant</string>
 
 </resources>

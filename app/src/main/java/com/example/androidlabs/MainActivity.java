@@ -1,8 +1,14 @@
 package com.example.androidlabs;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -19,43 +25,58 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     TextView textView ;
     EditText editText;
-    CheckBox checkBox;
-    boolean checkBoxChecked;
+    String nameEntered;
     private View parentLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_grid);
+        setContentView(R.layout.activity_main);
 
-        button = findViewById(R.id.button2);
-        textView = findViewById(R.id.textView);
-        editText = findViewById(R.id.editText);
-        checkBox = findViewById(R.id.checkBox);
-        checkBoxChecked = false;
+        button = findViewById(R.id.nextButton);
+        textView = findViewById(R.id.nameTextview);
+        editText = findViewById(R.id.editTextPersonName);
         parentLayout = findViewById(R.id.parent_layout);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String enteredText = String.valueOf(editText.getText());
-                textView.setText(enteredText);
 
-                Toast.makeText(getApplicationContext(), R.string.toast_message,Toast.LENGTH_LONG).show();
-            }
+
+
+        // Load the user's name from SharedPreferences and put it in the EditText
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String savedName = sharedPreferences.getString("user_name", "");
+        if(!savedName.equals(""))
+            editText.setText(savedName);
+
+        button.setOnClickListener(view -> {
+            nameEntered = String.valueOf(editText.getText());
+
+            // Launch the NameActivity using startActivityForResult
+            Intent intent = new Intent(MainActivity.this, NameActivity.class);
+            intent.putExtra("user_name",nameEntered);
+            nameActivityLauncher.launch(intent);
         });
 
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Snackbar snackbar;
-                if(b) {
-                    snackbar = Snackbar.make(parentLayout,getString(R.string.checkBox_state)+ " " + getString(R.string.on),BaseTransientBottomBar.LENGTH_LONG);
-                } else {
-                    snackbar = Snackbar.make(parentLayout, getString(R.string.checkBox_state)+ " "  +  getString(R.string.off), BaseTransientBottomBar.LENGTH_LONG);
+    }
+
+    private final ActivityResultLauncher<Intent> nameActivityLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == 1) {
+                    // If the result code is RESULT_OK (1), the user clicked "Thank You" in NameActivity,
+                    // so we can proceed to close the app.
+                    finish();
+                } else if (result.getResultCode() == 0) {
+                    // If the result code is 0, the user wants to change their name.
                 }
-                snackbar.setAction("Undo", click -> checkBox.setChecked(!b));
-                snackbar.show();
-
             }
-        });
+    );
+
+    @Override
+    protected void onPause() {
+        // Save the current value inside the EditText to SharedPreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("user_name", nameEntered);
+        editor.apply();
+
+        super.onPause();
     }
 }
