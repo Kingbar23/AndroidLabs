@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Laboratoires Android</string>
+<!--    <string name="app_name">Laboratoires Android</string>-->
     <string name="hello_world">Bonjour le monde</string>
     <string name="button_text">Je suis un bouton</string>
     <string name="android">J\'aime Androïd</string>
@@ -16,5 +16,14 @@
     <string name="thank_you">MERCI</string>
     <string name="enter_your_name">Entrez votre nom</string>
     <string name="next">Suivant</string>
+
+    <string name="app_name">Application Todo</string>
+    <string name="hint_type_here">Tapez ici..</string>
+    <string name="urgent">Urgent</string>
+    <string name="btn_add">Ajouter</string>
+    <string name="alert_dialog_title">Voulez-vous supprimer ceci ?</string>
+    <string name="alert_dialog_message">La rangée sélectionnée est : </string>
+    <string name="alert_dialog_positive">Supprimer</string>
+    <string name="alert_dialog_negative">Annuler</string>
 
 </resources>

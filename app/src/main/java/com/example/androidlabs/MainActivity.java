@@ -1,82 +1,157 @@
 package com.example.androidlabs;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button button;
-    TextView textView ;
-    EditText editText;
-    String nameEntered;
-    private View parentLayout;
+    private ListView listView;
+    private EditText editText;
+    private Switch switchUrgent;
+    private Button btnAdd;
+    private List<TodoItem> todoList; // Use List<TodoItem> instead of ArrayList<TodoItem>
+    private CustomListAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = findViewById(R.id.nextButton);
-        textView = findViewById(R.id.nameTextview);
-        editText = findViewById(R.id.editTextPersonName);
-        parentLayout = findViewById(R.id.parent_layout);
+        // Initialize UI elements
+        listView = findViewById(R.id.listView);
+        editText = findViewById(R.id.editText);
+        switchUrgent = findViewById(R.id.switchUrgent);
+        btnAdd = findViewById(R.id.btnAdd);
 
+        // Initialize the todoList List to store todo items
+        todoList = new ArrayList<>();
 
+        // Initialize the BaseAdapter and set it to the ListView
+        adapter = new CustomListAdapter(this, todoList);
+        listView.setAdapter(adapter);
 
-        // Load the user's name from SharedPreferences and put it in the EditText
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String savedName = sharedPreferences.getString("user_name", "");
-        if(!savedName.equals(""))
-            editText.setText(savedName);
+        // Set the onClickListener for the Add Button
+        btnAdd.setOnClickListener(v -> addItemToList());
 
-        button.setOnClickListener(view -> {
-            nameEntered = String.valueOf(editText.getText());
-
-            // Launch the NameActivity using startActivityForResult
-            Intent intent = new Intent(MainActivity.this, NameActivity.class);
-            intent.putExtra("user_name",nameEntered);
-            nameActivityLauncher.launch(intent);
+        // Set the onItemLongClickListener for the ListView
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            showDeleteConfirmationDialog(position);
+            return true;
         });
-
     }
 
-    private final ActivityResultLauncher<Intent> nameActivityLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == 1) {
-                    // If the result code is RESULT_OK (1), the user clicked "Thank You" in NameActivity,
-                    // so we can proceed to close the app.
-                    finish();
-                } else if (result.getResultCode() == 0) {
-                    // If the result code is 0, the user wants to change their name.
-                }
+    private void showDeleteConfirmationDialog(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.alert_dialog_title));
+        builder.setMessage(getString(R.string.alert_dialog_message) +  " " + position);
+        builder.setPositiveButton(getString(R.string.alert_dialog_positive) , (dialog, which) -> deleteItem(position));
+        builder.setNegativeButton(getString(R.string.alert_dialog_negative), null);
+        builder.show();
+    }
+
+    private void deleteItem(int position) {
+        if (position >= 0 && position < todoList.size()) {
+            todoList.remove(position);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+
+    private void addItemToList() {
+        // Get the title from the EditText
+        String text = editText.getText().toString().trim();
+
+        // Check if the title is not empty
+        if (!text.isEmpty()) {
+            // Get the urgency status from the Switch
+            boolean isUrgent = switchUrgent.isChecked();
+
+            // Create a new TodoItem with the title and urgency status
+            TodoItem todoItem = new TodoItem(text, isUrgent);
+
+            // Add the new todoItem to the todoList
+            todoList.add(todoItem);
+
+            // Clear the EditText
+            editText.getText().clear();
+
+            // Notify the adapter that the data has changed
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    // Custom BaseAdapter class
+    private static class CustomListAdapter extends BaseAdapter {
+        private Context context;
+        private List<TodoItem> todoList;
+
+        CustomListAdapter(Context context, List<TodoItem> todoList) {
+            this.context = context;
+            this.todoList = todoList;
+        }
+
+        @Override
+        public int getCount() {
+            return todoList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return todoList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Reuse views if possible
+            if (convertView == null) {
+                LayoutInflater inflater = LayoutInflater.from(context);
+                convertView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
             }
-    );
 
-    @Override
-    protected void onPause() {
-        // Save the current value inside the EditText to SharedPreferences
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("user_name", nameEntered);
-        editor.apply();
+            // Get the TodoItem at the current position
+            TodoItem todoItem = todoList.get(position);
 
-        super.onPause();
+            // Set the text of the TextView to the todo text
+            TextView textView = convertView.findViewById(android.R.id.text1);
+            textView.setText(todoItem.getText());
+
+            // If the todo item is urgent, set the background to red and text color to white
+            if (todoItem.isUrgent()) {
+                convertView.setBackgroundColor(Color.RED);
+                textView.setTextColor(Color.WHITE);
+            } else {
+                // Reset background and text color for non-urgent items
+                convertView.setBackgroundColor(Color.TRANSPARENT);
+                textView.setTextColor(Color.BLACK);
+            }
+
+            return convertView;
+        }
     }
 }
+

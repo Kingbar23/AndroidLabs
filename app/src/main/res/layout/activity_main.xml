@@ -1,51 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!-- activity_main.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/parent_layout"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/nameTextview"
-        android:layout_width="0dp"
-        android:layout_height="19dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="293dp"
-        android:text="@string/enter_your_name"
-        app:layout_constraintBottom_toTopOf="@+id/editTextPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- ListView to take the full height of the activity -->
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    <EditText
-        android:id="@+id/editTextPersonName"
-        android:layout_width="0dp"
+    <!-- LinearLayout for the EditText, Switch, and Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="191dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text=""
-        app:layout_constraintBottom_toTopOf="@+id/nextButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameTextview" />
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-    <Button
-        android:id="@+id/nextButton"
-        android:layout_width="91dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="304dp"
-        android:layout_marginBottom="604dp"
-        android:text="@string/next"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPersonName" />
+        <!-- EditText -->
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/hint_type_here" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Switch for Urgent -->
+        <Switch
+            android:id="@+id/switchUrgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/urgent"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <!-- Add Button -->
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_add" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
