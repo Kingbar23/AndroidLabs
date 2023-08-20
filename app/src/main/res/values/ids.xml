@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="listView" type="id" />
+    <item name="fragmentContainer" type="id" />
+    <item name="detailsContainer" type="id" />
+    <item name="titleTextView" type="id" />
+    <item name="descriptionTextView" type="id" />
+    <item name="list_view" type="id" />
+    <item name="details_container" type="id" />
+</resources>
